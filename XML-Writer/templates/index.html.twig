@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+{% include 'partials/head.html.twig' %}
+<body>
+{% include 'partials/header.html.twig' %}
+
+<main class="container mt-4">
+    <h1>XML Menu Tool</h1>
+
+    {# FLASH MESSAGES #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }} mt-2">{{ message }}</div>
+        {% endfor %}
+    {% endfor %}
+
+    {# CREATE BUTTON #}
+    <form method="post">
+        <button type="submit" name="create_xml" value="1" class="btn btn-success mb-3">
+            Create New Restaurant Menu XML
+        </button>
+    </form>
+
+    {# LIST XML FILES #}
+    <h3>Existing XML Files</h3>
+    <ul class="list-group mb-3">
+        {% for file in files %}
+            <li class="list-group-item">
+                <a href="#" class="edit-file" data-filename="{{ file }}" data-url="{{ path('xml_load', { filename: file }) }}">{{ file }}</a>
+            </li>
+        {% else %}
+            <li class="list-group-item">No XML files found.</li>
+        {% endfor %}
+    </ul>
+
+    {# XML EDITOR FORM #}
+    <form method="post" id="xml-editor-form" style="display:none;">
+        <input type="hidden" name="file_name" id="file_name">
+        <textarea name="xml_content" id="xml_content" class="form-control" rows="15"></textarea>
+        <button type="submit" name="edit_file" value="1" class="btn btn-primary mt-2">Save XML</button>
+    </form>
+</main>
+
+{# JS LIVE LOADING #}
+<script>
+    document.querySelectorAll('.edit-file').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const filename = this.dataset.filename;
+            const url = this.dataset.url;
+
+            fetch(url)
+                .then(res => {
+                    if (!res.ok) throw new Error('File not found');
+                    return res.json();
+                })
+                .then(data => {
+                    if (data.content) {
+                        document.getElementById('xml-editor-form').style.display = 'block';
+                        document.getElementById('file_name').value = filename;
+                        document.getElementById('xml_content').value = data.content;
+                        window.scrollTo(0, document.getElementById('xml-editor-form').offsetTop);
+                    } else {
+                        alert('Failed to load file.');
+                    }
+                })
+                .catch(err => alert(err.message));
+        });
+    });
+</script>
+
+</body>
+</html>
