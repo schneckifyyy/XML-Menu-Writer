@@ -111,5 +111,32 @@ XML;
         return $this->file($filePath, $filename, ResponseHeaderBag::DISPOSITION_ATTACHMENT);
     }
 
+    #[Route('/delete/{filename}', name: 'xml_delete', requirements: ['filename' => '.+'], methods: ['POST'])]
+    public function delete(string $filename, Request $request): Response
+    {
+        $folder = $this->getParameter('kernel.project_dir') . '/var/xml_files';
+        $filename = basename($filename); // prevent directory traversal
+        $filePath = $folder . '/' . $filename;
+
+        if (!$this->isCsrfTokenValid('delete' . $filename, $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Invalid CSRF token.');
+            return $this->redirectToRoute('xmlTool');
+        }
+
+        if (!file_exists($filePath)) {
+            $this->addFlash('danger', "File '$filename' not found.");
+            return $this->redirectToRoute('xmlTool');
+        }
+
+        if (!unlink($filePath)) {
+            $this->addFlash('danger', "Could not delete '$filename'.");
+        } else {
+            $this->addFlash('success', "File '$filename' deleted successfully.");
+        }
+
+        return $this->redirectToRoute('xmlTool');
+    }
+
+
 }
 
