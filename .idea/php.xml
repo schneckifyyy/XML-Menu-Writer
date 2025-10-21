@@ -54,6 +54,8 @@
       <path value="$PROJECT_DIR$/XML-Writer/vendor/twig/twig" />
       <path value="$PROJECT_DIR$/XML-Writer/vendor/twbs/bootstrap" />
       <path value="$PROJECT_DIR$/XML-Writer/vendor/symfony/asset" />
+      <path value="$PROJECT_DIR$/XML-Writer/vendor/symfony/polyfill-intl-idn" />
+      <path value="$PROJECT_DIR$/XML-Writer/vendor/symfony/mime" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />

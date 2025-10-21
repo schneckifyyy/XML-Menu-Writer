@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 
 final class XMLDisplayController extends AbstractController
@@ -25,20 +26,14 @@ final class XMLDisplayController extends AbstractController
 
             $xmlContent = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
-<menu>
-    <starters>
-        <item><name></name><price></price></item>
-    </starters>
-    <main>
-        <item><name></name><price></price></item>
-    </main>
-    <drinks>
-        <item><name></name><price></price></item>
-    </drinks>
-    <desserts>
-        <item><name></name><price></price></item>
-    </desserts>
-</menu>
+<Speisekarte>
+    <suppen>
+        <suppe><name></name><preis></preis></suppe>
+    </suppen>
+    <Vorspeisen>
+        <Vorspeise><name></name><preis></preis></Vorspeise>
+    </Vorspeisen>
+</Speisekarte>
 XML;
 
             file_put_contents($filePath, $xmlContent);
@@ -71,7 +66,6 @@ XML;
     #[Route('/xml/load/{filename}', name: 'xml_load', requirements: ['filename' => '.+'])]
     public function load(string $filename): JsonResponse
     {
-        // Proper path with slash
         $folder = $this->getParameter('kernel.project_dir') . '/var/xml_files';
         $filename = basename($filename); // prevent directory traversal
         $filePath = $folder . '/' . $filename;
@@ -84,5 +78,20 @@ XML;
             'content' => file_get_contents($filePath)
         ]);
     }
+
+    #[Route('/download/{filename}', name: 'xml_download')]
+    public function download(string $filename): Response
+    {
+        $folder = $this->getParameter('kernel.project_dir') . '/var/xml_files';
+        $filename = basename($filename);
+        $filePath = $folder . '/' . $filename;
+
+        if (!file_exists($filePath)) {
+            throw $this->createNotFoundException("File not found: $filename");
+        }
+
+        return $this->file($filePath, $filename, ResponseHeaderBag::DISPOSITION_ATTACHMENT);
+    }
+
 }
 

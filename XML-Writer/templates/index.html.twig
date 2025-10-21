@@ -26,7 +26,12 @@
     <ul class="list-group mb-3">
         {% for file in files %}
             <li class="list-group-item">
-                <a href="#" class="edit-file" data-filename="{{ file }}" data-url="{{ path('xml_load', { filename: file }) }}">{{ file }}</a>
+                <a href="#" class="edit-file"
+                   data-filename="{{ file }}"
+                   data-url="{{ path('xml_load', { filename: file }) }}">
+                    {{ file }}
+                </a>
+                <a href="{{ path('xml_download', { filename: file }) }}" class="btn btn-primary btn-sm">Download</a>
             </li>
         {% else %}
             <li class="list-group-item">No XML files found.</li>
