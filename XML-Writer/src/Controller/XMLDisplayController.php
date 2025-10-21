@@ -56,6 +56,24 @@ XML;
             return $this->redirectToRoute('xmlTool');
         }
 
+        // UPLOAD XML
+        if ($request->isMethod('POST') && $request->request->get('upload_xml')) {
+            $uploadedFile = $request->files->get('xml_file');
+
+            if ($uploadedFile && $uploadedFile->isValid()) {
+                $originalName = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
+                $filename = $originalName . '_' . time() . '.xml';
+                $folder = $this->getParameter('kernel.project_dir') . '/var/xml_files';
+                $uploadedFile->move($folder, $filename);
+
+                $this->addFlash('success', "File '$filename' uploaded successfully.");
+            } else {
+                $this->addFlash('danger', 'Invalid or missing file.');
+            }
+
+            return $this->redirectToRoute('xmlTool');
+        }
+
         // LIST ALL XML FILES
         $allFiles = scandir($folder);
         $files = array_filter($allFiles, fn($f) => substr($f, -4) === '.xml');

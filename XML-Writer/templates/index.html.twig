@@ -14,6 +14,16 @@
         {% endfor %}
     {% endfor %}
 
+    {# UPLOAD FORM #}
+    <form method="post" enctype="multipart/form-data" class="mb-4">
+        <div class="input-group">
+            <input type="file" name="xml_file" accept=".xml" class="form-control" required>
+            <button type="submit" name="upload_xml" value="1" class="btn btn-secondary">
+                Upload XML
+            </button>
+        </div>
+    </form>
+
     {# CREATE BUTTON #}
     <form method="post">
         <button type="submit" name="create_xml" value="1" class="btn btn-success mb-3">
